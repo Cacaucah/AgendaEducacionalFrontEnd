@@ -8,12 +8,10 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import { Alert } from '@material-ui/lab';
 import UsuarioService from '../app/services/usuario-service';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import axios from 'axios';
 import { useHistory } from "react-router-dom";
 import LocalStorageService from '../app/services/localStorage-service';
 import {mensagemErro} from '../components/toastr';
@@ -37,9 +35,7 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
  
- 
   export default function SignIn() {
-  
      const entrarAplicacao = React.createContext({
       entrar:  async (email, senha) => {
         usuarioService.autenticar({
@@ -49,7 +45,6 @@ const useStyles = makeStyles((theme) => ({
             LocalStorageService.adicionarItem('_usuario_logado', response.data);
                history.push('/dashboard');
              }).catch(e=>{
-               setEstado(true);
                 mensagemErro(e.response.data);
              })
         }
@@ -58,7 +53,6 @@ const useStyles = makeStyles((theme) => ({
     const classes = useStyles();
     const contextEntrar = useContext(entrarAplicacao);
     const [usuarioService, setService] = useState(new UsuarioService());
-    const [erroEstado, setEstado] = useState(false);
     const[usuario, setUsuario] = useState({
       email: '', 
       senha: ''
@@ -122,11 +116,7 @@ const useStyles = makeStyles((theme) => ({
               Log In
             </Button>
             <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Esqueceu sua senha?
-                </Link>
-              </Grid>
+             
               <Grid item>
                 <Link href="#/cadastro-usuario" variant="body2">
                   {"Não tem uma conta? Inscreva-se"}

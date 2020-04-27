@@ -25,9 +25,7 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 export default function NotAuthorized(){
-    let history = useHistory();
     const classes = useStyles();
-    const [redirecionar, setRota] = useState();
     return(
         <Container component="main" maxWidth="xs">
           

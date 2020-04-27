@@ -1,36 +1,31 @@
-import React, { useEffect } from 'react';
-import clsx from 'clsx';
+import React, { useEffect, useState, useReducer  } from 'react';
+import { 
+  Context, 
+  initialState, 
+  reducer 
+} from '../store';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import Box from '@material-ui/core/Box';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import Title from './Title';
-import { mainListItems } from './listItem';
-import DateRangeIcon from '@material-ui/icons/DateRange';
-import CriarAula from './CriarAula';
-import Orders from './Orders';
 import axios from 'axios';
+import Aulas from '../views/Aulas'
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 import LocalStorageService from '../app/services/localStorage-service';
+import MenuHeader from '../components/menu-header/menuHeader'
+import Alunos from '../views/Alunos';
+import { Card, CardContent, Icon, Button } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+       Agenda Educacional
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -41,6 +36,20 @@ function Copyright() {
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
+  typography:{
+    fontSize: '1.2rem',
+  },
+   cardStyle: {
+    display: 'block',
+    width: '15vw',
+    margin: '0 auto',
+    transitionDuration: '0.3s',
+    height: '10vw'
+ },
+ icon:{
+   marginTop: 25,
+   
+ },
   root: {
     display: 'flex',
   },
@@ -120,9 +129,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Dashboard() {
+
   useEffect(()=>{
     const usuarioLogado = LocalStorageService.obterItem('_usuario_logado');
-
    // para pegar dados que necessitem do id do usuario logado
    //`http://localhost:8080/api/materia/${usuarioLogado.id}/materia`
     axios.get('http://localhost:8080/api/materia/2/materia')
@@ -132,79 +141,87 @@ export default function Dashboard() {
       console.log(err.response)
     })
   })
-  
+  let history = useHistory();
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
+  const [estado, setState] = useState(false);
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-        <Toolbar className={classes.toolbar}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Dashboard
-          </Typography>
-      
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="permanent"
-        classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-        }}
-        open={open}
-      >
-        <div className={classes.toolbarIcon}>
-        
-          <DateRangeIcon style={{}} />  
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </div>
-        <Divider />
-        <List>{mainListItems}</List>
-        <Divider />
-       
-      </Drawer>
+     <MenuHeader/>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>
-               Uh uh
-              </Paper>
-            </Grid>
-            {/* Proximas Aulas */}
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper className={fixedHeightPaper}>
-                <CriarAula />
-              </Paper>
-            </Grid>
-            {/* Recent Orders */}
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <Orders />
-              </Paper>
-            </Grid>
+           
+        <Grid container spacing={4}>
+          <Grid item xs={12} sm={4} lg={3}>
+          <Card className={classes.cardStyle}>
+          <div className={classes.details}>
+            <CardContent className={classes.content} onClick={ (e) => history.push('/Aulas')}>
+              <Typography className={classes.typography}  align={'center'}>
+                Criar Aula
+              </Typography>
+              <Typography className={classes.typography} align={'center'} className={classes.icon} >
+                <Button onClick={e => setState(true)}>
+                  <AddCircleIcon  color="primary"  fontSize="large"/>
+                </Button>
+              </Typography>
+            </CardContent>
+          </div>
+          </Card>
           </Grid>
+          <Grid item xs={12} sm={4} lg={3}>
+          <Card className={classes.cardStyle} onClick={ (e) => history.push('/Alunos')}>
+          <div className={classes.details}>
+            <CardContent className={classes.content}>
+              <Typography className={classes.typography} align={'center'}>
+                Alunos
+              </Typography>
+              <Typography className={classes.typography} align={'center'} className={classes.icon} >
+              <Button>
+                  <AddCircleIcon  color="primary"  fontSize="large"/>
+              </Button>
+              </Typography>
+            </CardContent>
+          </div>
+          </Card>
+          </Grid>
+          <Grid item xs={12} sm={4} lg={3}>
+          <Card className={classes.cardStyle}  onClick={ (e) => history.push('/Materias')}>
+          <div className={classes.details}>
+            <CardContent className={classes.content}>
+              <Typography className={classes.typography} align={'center'}>
+                Materias
+              </Typography>
+              <Typography className={classes.typography} align={'center'} className={classes.icon} >
+              <Button>
+                  <AddCircleIcon  color="primary"  fontSize="large"/>
+              </Button>
+              </Typography>
+            </CardContent>
+          </div>
+          </Card>
+          </Grid>
+          <Grid item xs={12} sm={4} lg={3}>
+          <Card className={classes.cardStyle}>
+          <div className={classes.details}>
+            <CardContent className={classes.content} onClick={ (e) => history.push('/Instituicoes')}>
+              <Typography className={classes.typography} align={'center'}>
+                Instituições
+              </Typography>
+              <Typography className={classes.typography} align={'center'} className={classes.icon} >
+              <Button>
+                  <AddCircleIcon  color="primary"  fontSize="large"/>
+              </Button>
+              </Typography>
+            </CardContent>
+          </div>
+          </Card>
+          </Grid>
+          <Grid item xs={12} sm={4} lg={12}>
+            <Aulas />
+          </Grid>
+        </Grid>
+         
           <Box pt={4}>
             <Copyright />
           </Box>

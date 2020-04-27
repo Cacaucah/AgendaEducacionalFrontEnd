@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Title from './Title';
 import BookIcon from '@material-ui/icons/Book';
 import moment from 'moment';
 import Container from '@material-ui/core/Container';
@@ -32,9 +30,7 @@ export default function CriarAula() {
         spacing={0}
         direction="column"
         >
-        <Grid item xs={12} md={8} lg={9}>
-          <Title>Criar uma aula</Title>
-        </Grid>
+        
         <Grid style={{marginTop: 20}} item xs={12} md={8} lg={9}>
           <Typography component="p" variant="h4">
             <BookIcon style={{fontSize: 50,}}/>
