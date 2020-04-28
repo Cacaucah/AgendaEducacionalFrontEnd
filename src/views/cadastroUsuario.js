@@ -73,7 +73,8 @@ const useStyles = makeStyles((theme) => ({
                mensagemSucesso('Usuário cadastrado com sucesso! Faça o login para acessar o sistema.')
                history.push('/login');
              }).catch(e=>{
-                 mensagemErro(e.response.data);
+           
+                 mensagemErro(e.response);
            })
          }
         

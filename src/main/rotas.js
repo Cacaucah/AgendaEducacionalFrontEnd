@@ -22,7 +22,7 @@ function PrivateRoute ({ component: Component, ...rest }) {
                         )
                     }else{
                         return(
-                            <Redirect to={{ pathname: "/", state: { from: props.location } }} />
+                            <Redirect to={{ pathname: "/login", state: { from: props.location } }} />
                         )
                     }
                     
@@ -35,7 +35,7 @@ function Rotas(){
     return(
         <HashRouter>
             <Switch>
-                <Route path="/" component={Login}/>
+                <Route path="/login" component={Login}/>
                 <Route path="/cadastro-usuario" component={CadastroUsuario}/>
                 <PrivateRoute path="/dashboard" component={ Dashboard}/>        
                 <PrivateRoute path="/Alunos" component={ CadastrarAlunos}/>      
