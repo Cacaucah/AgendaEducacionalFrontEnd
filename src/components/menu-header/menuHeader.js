@@ -8,13 +8,12 @@ import DateRangeIcon from '@material-ui/icons/DateRange';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Drawer from '@material-ui/core/Drawer';
-import { AppBar, Toolbar, Typography, Icon, Button } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-import PeopleIcon from '@material-ui/icons/People';
 import BookIcon from '@material-ui/icons/Book';
 import CollectionsBookmarkIcon from '@material-ui/icons/CollectionsBookmark';
 import SchoolIcon from '@material-ui/icons/School';
@@ -178,23 +177,17 @@ export default function MenuHeader() {
                         </ListItemIcon>
                         <ListItemText primary="Aulas" />
                       </ListItem>
-                      <ListItem button onClick={ (e) => history.push('/Alunos')}>
-                        <ListItemIcon>
-                          <PeopleIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Alunos" />
-                      </ListItem>
                       <ListItem button onClick={ (e) => history.push('/Materias')}>
                         <ListItemIcon>
                           <CollectionsBookmarkIcon />
                         </ListItemIcon>
                         <ListItemText primary="Materias" />
                       </ListItem>
-                      <ListItem button onClick={ (e) => history.push('/Instituicoes')}>
+                      <ListItem button onClick={ (e) => history.push('/Clientes')}>
                         <ListItemIcon>
                           <SchoolIcon />
                         </ListItemIcon>
-                        <ListItemText primary="Instituições" />
+                        <ListItemText primary="Clientes" />
                       </ListItem>
                     </List>
                     <Divider />

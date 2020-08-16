@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
      const classes = useStyles();
      
      //importando service
-     const [usuarioService, setService] = useState(new UsuarioService());
+     const [usuarioService] = useState(new UsuarioService());
 
      const validar = () =>{
       const msgs = [];
@@ -89,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
         })
 
         //contexto de erro
-        const [erroText, setErroText] = useState({
+        const [erroText] = useState({
           errorNome: false,
           mensagem: ''
         });

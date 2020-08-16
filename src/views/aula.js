@@ -1,10 +1,8 @@
-import React, { useState, useEffect, forwardRef, useContext, useLayoutEffect  } from 'react';
+import React, { useState, useContext, useLayoutEffect  } from 'react';
 import LocalStorageService from '../app/services/localStorage-service';
-import Axios from 'axios';
 import { makeStyles, TextField, Grid, FormControl, InputLabel, MenuItem, Select, Button, TextareaAutosize } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { useHistory } from 'react-router-dom';
 import MenuHeader from '../components/menu-header/menuHeader'
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -18,11 +16,10 @@ import {
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-import moment, { now } from 'moment';
+import moment from 'moment';
 import AulaService from '../app/services/aula-service';
 import { mensagemErro, mensagemSucesso } from '../components/toastr';
 import MateriaService from '../app/services/materia-service';
-import AlunoService from '../app/services/aluno-service';
 import InstituicaoService from '../app/services/instituicao-service';
 const useStyles = makeStyles((theme) => ({
  
@@ -90,41 +87,42 @@ export default function CadastrarAulas() {
     var year = d.getFullYear();
     var day = d.getDay();
     var month = d.getMonth();
-    let instituicaoId = "";
-    let alunoId = 0;
-    let hora = value.hora[0];
-    let min = value.hora[1];
-    if(value.instituicao !== null){
-      instituicaoId = value.instituicao.id;
-    }else{
-      instituicaoId= null;
-    }
-    if(value.aluno !== null){
-      alunoId = value.aluno.id;
-    }
-    console.log(value)
+    var horaInicial = value.horaInicial.split(":");
+    var horaFinal = value.horaFim.split(":");
+    var horaInicio = horaInicial[0];
+    var minutoInicial= horaInicial[1];
+    var horaFim = horaFinal[0];
+    var minutoFim= horaFinal[1];
+    var ano = value.data.split("-")[0];
+    var dia = value.data.split("-")[2];
+    var mes = value.data.split("-")[1]-1;
     setState({
         current_id: value.id,
         materia: value.materia.id,
-        aluno: alunoId,
-        instituicao: instituicaoId,
-        aula: value.tipoDeAula,
-        datas: value.data,
+        cliente: value.cliente.id,
+        tipoCliente: value.cliente.tipoCliente,
         detalhes: value.detalhes,
-        hora: new Date(year, month, day, hora, min),
         valor: value.valor
+    })
+    setData({
+      datas: new Date(ano, mes, dia)
+    })
+    setDataFinal({
+      horaFinal: new Date(year, month, day, horaFim, minutoFim)
+    })
+    setHoraInicial({
+      horaInicial:  new Date(year, month, day, horaInicio, minutoInicial),
     })
   }
       const [state, setState] = useState({
         id: '',
         materia: '',
         aluno: '',
-        instituicao: '',
+        cliente: '',
         professor: '',
         //refere-se ao tipo de aula
-        aula: '',
-        datas: new Date(),
-        hora: new Date(),
+        tipoCliente: '',
+       
         detalhes: '',
         valor: '',
         delete: false,
@@ -137,14 +135,6 @@ export default function CadastrarAulas() {
     const filtro = {
       professor: usuarioLogado.id,
     }
-    //chamando os services
-    alunoService.getAlunos(filtro).then(response=>
-       setAlunos({
-         aluno: response.data
-       })
-    ).catch(e=>{
-      console.log(e.response)
-    });
     materiaService.getMaterias(filtro).then(response=>
       // console.log(response.data)
       setMaterias({
@@ -162,57 +152,64 @@ export default function CadastrarAulas() {
       console.log(e.response)
     });
 }
-  const [allMaterias, setMaterias] = useState({
-    materia: []
-  });
-    const [allAluno, setAlunos] = useState({
-      aluno: []
+    const [allMaterias, setMaterias] = useState({
+      materia: []
+    });
+    const [datas, setData] = useState({
+      datas: new Date(),
+    });
+    const [horaFinal, setDataFinal] = useState({
+      horaFinal: new Date(),
+    });
+    const [horaInicial, setHoraInicial] = useState({
+      horaInicial: new Date(),
     });
     const [AllInstituicoes, setInstituicoes] = useState({
       instituicao: []
-    });
-    useLayoutEffect (()=>{
-      fetchData();
-    }, [] )
-    useLayoutEffect (()=>{
-      fetchData();
-    }, [] )
-    useLayoutEffect (()=>{
-      fetchData();
-    }, [] )
+    }); 
     const classes = useStyles();
-  
-    
+
     const handleDateChange = (date) => {
-      setState({
-        datas: date
+      console.log(date)
+      setData({
+        datas: new Date(date),
       });
     };
+    const handleDateHoraFim = (date) =>{
+      console.log(date)
+      setDataFinal({
+        horaFinal: date
+      })
+    }
+    const handleDateHoraInicio = (date) =>{
+      setHoraInicial({
+        horaInicial: date
+      })
+    }
     const validar = () =>{
       const msgs = [];
       if(!state.materia){
           msgs.push('O campo materia é obrigatório!')
       }
      
-      if(!state.aluno && !state.instituicao){
-        msgs.push('Selecione um aluno ou uma instituição para continuar!')
+      if(!state.cliente){
+        msgs.push('Selecione um cliente para continuar!')
       }
-      if(state.aluno){
-        setState({
-          disableInstituicao: true
-        })
+      if(horaFinal.horaFinal.getTime()===horaInicial.horaInicial.getTime()){
+        msgs.push('Hora inválida!');
       }
-      if(state.aluno && state.aula !== 'PARTICULAR'){
-        msgs.push('Selecione o tipo de aula PARTICULAR para alunos!')
+      
+      if(horaInicial.horaInicial.getTime()>horaFinal.horaFinal.getTime()){
+        msgs.push('Hora inválida!');
       }
-      if(!state.aula){
-        msgs.push('O campo tipo de aula é obrigatório!')
+      if(horaFinal.horaFinal.getTime()<horaInicial.horaInicial.getTime()){
+        msgs.push('Hora inválida!');
       }
       return msgs;
     }
     const cadastrarAula = React.createContext({
-      cadastrar: async(materia, aluno, instituicao, aula, datas, hora, valor, detalhes)=>{
-        console.log('No cadastro chega: ' + instituicao)
+      cadastrar: async(materia, instituicao, datas, horaInicio, horaFim, valor, detalhes)=>{
+       
         const messages = validar();
         if(messages && messages.length>0){
           messages.forEach((msg, item)=>{
@@ -220,26 +217,26 @@ export default function CadastrarAulas() {
           });
           return false;
         }
-        const dataFormata = moment(datas).format('YYYY-MM-DD'); 
-        const horaFormatada = moment(hora).format('H:mm');
+       
         if(!instituicao){
           instituicao= null;
         }
-        console.log('Se não existe, então: ' + instituicao)
+      
+       
         const usuarioLogado = LocalStorageService.obterItem('_usuario_logado');
         aulaService.salvar({
           materia: materia,
-          aluno: aluno,
-          instituicao: instituicao,
+          cliente: instituicao,
           professor: usuarioLogado.id,
-          aula: aula,
-          datas: dataFormata,
-          hora: horaFormatada,
+          data: moment(datas).format('YYYY-MM-DD'),
+          horaInicial: moment(horaInicio).format('HH:mm'),
+          horaFim: moment(horaFim).format('HH:mm'),
           valor: valor,
           detalhes: detalhes
         }).then(response=>{
           mensagemSucesso('Aula cadastrada com sucesso!')
         }).catch(e=>{
+          console.log(e.response);
             mensagemErro(e.response.data);
         })
       },
@@ -251,18 +248,17 @@ export default function CadastrarAulas() {
           });
           return false;
         }
-        const dataFormata = moment(state.datas).format('YYYY-MM-DD'); 
-        const horaFormatada = moment(state.hora).format('H:mm');
+       console.log(state.tipoCliente)
         const usuarioLogado = LocalStorageService.obterItem('_usuario_logado');
         aulaService.atualizar({
           id: state.current_id,
           materia: state.materia,
-          aluno: state.aluno,
-          instituicao: state.instituicao,
-          aula: state.aula,
+          cliente: state.cliente,
+          tipoCliente: state.tipoCliente,
           professor: usuarioLogado.id,
-          datas: dataFormata,
-          hora: horaFormatada,
+          data: moment(datas.datas).format('YYYY-MM-DD'),
+          horaInicial: moment(horaInicial.horaInicial).format('HH:mm'),
+          horaFim: moment(horaFinal.horaFinal).format('HH:mm'),
           valor: state.valor,
           detalhes: state.detalhes
         }).then(response=>{
@@ -271,12 +267,10 @@ export default function CadastrarAulas() {
             id: '',
             materia: '',
             aluno: '',
-            instituicao: '',
+            cliente: '',
             professor: '',
+            tipoCliente: '',
             //refere-se ao tipo de aula
-            aula: '',
-            datas: new Date(),
-            hora: new Date(),
             detalhes: '',
             valor: '',
             delete: false,
@@ -289,12 +283,13 @@ export default function CadastrarAulas() {
       }
     })
     const contextCadastrar = useContext(cadastrarAula);
-
+    useLayoutEffect (()=>{
+      fetchData();
+    }, [] )
     //importação dos services que fazem conexão com a API
-    const [materiaService, setMateriaService] = useState(new MateriaService());
-    const [alunoService, setAlunoService] = useState(new AlunoService());
-    const [instituicaoService, setInstituicaoService] = useState(new InstituicaoService());
-    const [aulaService, setService] = useState(new AulaService());
+    const [materiaService] = useState(new MateriaService());
+    const [instituicaoService] = useState(new InstituicaoService());
+    const [aulaService] = useState(new AulaService());
     
       return (
         <div className={classes.root}>
@@ -332,38 +327,15 @@ export default function CadastrarAulas() {
                     }
                   </Select>
                 </FormControl>
-                <FormControl variant="filled" className={classes.formControl}>
-                <InputLabel id="demo-simple-select-outlined-label">Alunos</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-outlined-label"
-                    id="demo-simple-select-outlined"
-                    label="Alunos"
-                    value={state.aluno}
-                    onChange={e => (setState({...state, aluno: e.target.value}))}
-                    disabled={state.instituicao ? true : false}
-                   >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    {
-                       allAluno.aluno.map((aluno, index) => (
-                        <MenuItem key={index} value={aluno.id}>
-                          {aluno.nome}
-                        </MenuItem>
-                    ))
-                    }
-                  </Select>
-                </FormControl>
               
                 <FormControl variant="filled" className={classes.formControl}>
-                <InputLabel id="demo-simple-select-outlined-label">Instituição</InputLabel>
+                <InputLabel id="demo-simple-select-outlined-label">Cliente</InputLabel>
                   <Select
                     labelId="demo-simple-select-outlined-label"
                     id="demo-simple-select-outlined"
                     label="Instituição"
-                    value={state.instituicao}
-                    disabled={state.aluno ? true : false}
-                    onChange={e => setState({...state, instituicao: e.target.value})}
+                    value={state.cliente}
+                    onChange={e => setState({...state, cliente: e.target.value})}
                   >
                     <MenuItem value="">
                       <em>None</em>
@@ -375,35 +347,18 @@ export default function CadastrarAulas() {
                         </MenuItem>
                     ))
                     }
-                    {/* <MenuItem value={"FAESP"}>FAESP</MenuItem> */}
                   </Select>
                 </FormControl>
-                <FormControl variant="filled" className={classes.formControl}>
-                <InputLabel id="demo-simple-select-outlined-label">Tipo de Aula</InputLabel>
-                <Select
-                    labelId="demo-simple-select-outlined-label"
-                    id="demo-simple-select-outlined"
-                    label="Aula"
-                    value={state.aula}
-                    onChange={e => setState({...state, aula: e.target.value})}
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={'PRIVADA'}>PRIVADA</MenuItem>
-                    <MenuItem value={'PARTICULAR'}>PARTICULAR</MenuItem>
-                    <MenuItem value={'PUBLICA'}>PUBLICA</MenuItem>
-                  </Select>
-                </FormControl>
+               
               
                 <MuiPickersUtilsProvider locale={ptBR} utils={DateFnsUtils}>
                 <FormControl variant="filled" className={classes.formControl}>
                   <KeyboardDatePicker
                     margin="normal"
                     id="date-picker-dialog"
-                    label="Date picker dialog"
+                    label="Data da aula"
                     format={'dd-MM-yyyy'}
-                    value={state.datas}
+                    value={datas.datas}
                     KeyboardButtonProps={{
                       'aria-label': 'change date',
                     }}
@@ -414,16 +369,30 @@ export default function CadastrarAulas() {
                   <KeyboardTimePicker
                     margin="normal"
                     id="time-picker"
-                    label="Time picker"
-                    value={state.hora}
+                    label="Horario de inicio"
+                    value={horaInicial.horaInicial}
                     ampm={false}
                     KeyboardButtonProps={{
                       'aria-label': 'change time',
                     }}
-                    onChange={handleDateChange}
+                    onChange={handleDateHoraInicio}
+                  />
+                </FormControl>
+                <FormControl variant="filled" className={classes.formControl}>
+                  <KeyboardTimePicker
+                    margin="normal"
+                    id="time-picker-fim"
+                    label="Horario de fim"
+                    value={horaFinal.horaFinal}
+                    ampm={false}
+                    KeyboardButtonProps={{
+                      'aria-label': 'change time',
+                    }}
+                    onChange={handleDateHoraFim}
                   />
                 </FormControl>
                 </MuiPickersUtilsProvider>
+                
                 <FormControl variant="filled" className={classes.formControl}>
                   <TextField
                   className={classes.root}
@@ -457,9 +426,10 @@ export default function CadastrarAulas() {
                         id: '',
                         materia: '',
                         aluno: '',
-                        instituicao: '',
+                        cliente: '',
                         datas: new Date(),
-                        hora: new Date(),
+                        horaInicial: new Date(),
+                        horaFinal: new Date(),
                         valor: '',
                         detalhes: '',
                         professor: ''
@@ -469,8 +439,8 @@ export default function CadastrarAulas() {
                       </Button>
                       </Grid>:
                       <Button fullwidth variant="contained" color="primary"
-                      onClick={e=> contextCadastrar.cadastrar(state.materia, state.aluno, 
-                        state.instituicao, state.aula, state.datas, state.hora,
+                      onClick={e=> contextCadastrar.cadastrar(state.materia, 
+                        state.cliente, datas.datas, horaInicial.horaInicial, horaFinal.horaFinal,
                         state.valor, state.detalhes)}
                       >
                           Cadastrar

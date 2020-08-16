@@ -71,13 +71,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function CadastrarInstituicao() {
       const onChildChanged = (value) =>{
-        console.log(value)
         setState({
             current_id: value.id,
             nome: value.nome,
             rua: value.rua,
             cep: value.cep,
-            numero: value.numero
+            numero: value.numero,
+            situacao: value.situacao,
+            telefone: value.telefone,
+            estado: value.estado,
+            cidade: value.cidade,
+            tipoCliente: value.tipoCliente
         })
       }
       const validar = () =>{
@@ -94,10 +98,17 @@ export default function CadastrarInstituicao() {
         if(!state.numero){
           msgs.push('O campo numero é obrigatório!')
         }
+        if(!state.tipoCliente){
+          msgs.push('O campo numero é obrigatório!')
+        }
+        if(!state.situacao){
+          msgs.push('O campo numero é obrigatório!')
+        }
         return msgs;
       }
       const cadastrarInstituicao = React.createContext({
-        cadastrar: async(nome, rua, cep, numero)=>{
+        cadastrar: async(nome, rua, cep, numero, telefone, cidade, estado, situacao, tipoCliente)=>{
+          console.log(telefone, situacao, tipoCliente)
           const messages = validar();
           if(messages && messages.length>0){
             messages.forEach((msg, item)=>{
@@ -111,10 +122,16 @@ export default function CadastrarInstituicao() {
             rua: rua,
             cep: cep,
             numero: numero,
+            telefone: telefone,
+            cidade: cidade,
+            estado: estado,
+            situacao: situacao,
+            tipoCliente: tipoCliente,
             professor: usuarioLogado.id
           }).then(response=>{
-            mensagemSucesso('Instituição cadastrada com sucesso!')
+            mensagemSucesso('Cliente cadastrado com sucesso!')
           }).catch(e=>{
+            console.log(e)
               mensagemErro(e.response.data);
           })
         },
@@ -133,9 +150,14 @@ export default function CadastrarInstituicao() {
             rua: state.rua,
             cep: state.cep,
             numero: state.numero,
+            telefone: state.telefone,
+            cidade: state.cidade,
+            estado: state.estado,
+            situacao: state.situacao,
+            tipoCliente: state.tipoCliente,
             professor: usuarioLogado.id
           }).then(response=>{
-            mensagemSucesso('Instituição atualizada com sucesso!')
+            mensagemSucesso('Cliente atualizado com sucesso!')
           }).catch(e=>{
             console.log(e.response)
               mensagemErro(e.response);
@@ -143,13 +165,18 @@ export default function CadastrarInstituicao() {
         }
       })
       const contextCadastrar = useContext(cadastrarInstituicao);
-      const [instituicaoService, setService] = useState(new InstituicaoService());
+      const [instituicaoService] = useState(new InstituicaoService());
       const classes = useStyles();
       const [state, setState] = useState({
         nome: '',
         rua: '',
         numero: '',
         cep: '',
+        telefone: '',
+        cidade: '',
+        estado: '',
+        situacao: '',
+        tipoCliente: '',
         professor: '',
         current_id: 0,
       })
@@ -165,10 +192,11 @@ export default function CadastrarInstituicao() {
             <Grid container spacing={3}>
               <Grid item xs={12} sm={12} lg={12}>
                   <Typography variant="body2" color="textSecondary" component="h2">
-                    Cadastro de Instituições
+                    Cadastro de Clientes
                   </Typography>
               </Grid>
               <Grid item xs={12} sm={12} lg={12}>
+                
                 <FormControl variant="filled" className={classes.formControl}>
                   <TextField
                   className={classes.root}
@@ -186,14 +214,14 @@ export default function CadastrarInstituicao() {
                   className={classes.root}
                   required
                   id="outlined-required"
-                  label="Rua"
-                  value={state.rua}
+                  label="Telefone"
+                  value={state.telefone}
                   variant="outlined"
-                  onChange={e => setState({...state, rua: e.target.value})}
                   fullWidth
+                  onChange={e => setState({...state, telefone: e.target.value})}
                   />
+                  
                 </FormControl>
-              
                 <FormControl variant="filled" className={classes.formControl}>
                   <TextField
                   className={classes.root}
@@ -208,6 +236,19 @@ export default function CadastrarInstituicao() {
                 </FormControl>
                 <FormControl variant="filled" className={classes.formControl}>
                   <TextField
+                  className={classes.root}
+                  required
+                  id="outlined-required"
+                  label="Rua"
+                  value={state.rua}
+                  variant="outlined"
+                  onChange={e => setState({...state, rua: e.target.value})}
+                  fullWidth
+                  />
+                </FormControl>
+              
+                <FormControl variant="filled" className={classes.formControl}>
+                  <TextField
                   required
                   id="outlined-required"
                   label="Numero"
@@ -216,6 +257,63 @@ export default function CadastrarInstituicao() {
                   onChange={e => setState({...state, numero: e.target.value})}
                   />
                 </FormControl>
+                <FormControl variant="filled" className={classes.formControl}>
+                  <TextField
+                  className={classes.root}
+                  required
+                  id="outlined-required"
+                  label="Estado"
+                  value={state.estado}
+                  variant="outlined"
+                  fullWidth
+                  onChange={e => setState({...state, estado: e.target.value})}
+                  />
+                </FormControl>
+                <FormControl variant="filled" className={classes.formControl}>
+                  <TextField
+                  className={classes.root}
+                  required
+                  id="outlined-required"
+                  label="Cidade"
+                  value={state.cidade}
+                  variant="outlined"
+                  fullWidth
+                  onChange={e => setState({...state, cidade: e.target.value})}
+                  />
+                </FormControl>
+                <FormControl variant="filled" className={classes.formControl}>
+                <InputLabel id="demo-simple-select-outlined-label">Tipo de Cliente</InputLabel>
+                <Select
+                    labelId="demo-simple-select-outlined-label"
+                    id="demo-simple-select-outlined"
+                    label="Aula"
+                    value={state.tipoCliente}
+                    onChange={e => setState({...state, tipoCliente: e.target.value})}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={'PRIVADO'}>PRIVADO</MenuItem>
+                    <MenuItem value={'PARTICULAR'}>PARTICULAR</MenuItem>
+                    <MenuItem value={'PUBLICO'}>PUBLICO</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl variant="filled" className={classes.formControl}>
+                    <InputLabel id="demo-simple-select-outlined-label">Situação</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-outlined-label"
+                        id="demo-simple-select-outlined"
+                        label="Age"
+                        onChange={e => setState({...state, situacao: e.target.value})}
+                        value={state.situacao}
+                      >
+                      <MenuItem value="">
+                          <em>None</em>
+                      </MenuItem>
+                      <MenuItem value={'ATIVO'}>ATIVO</MenuItem>
+                      <MenuItem value={'INATIVO'}>INATIVO</MenuItem>
+                      </Select>
+                    </FormControl>
                 <Grid item xs={12} sm={12} lg={4}>
                 <FormControl variant="filled" className={classes.Cadastrar}>
                 <Grid item xs={12} sm={12} lg={4}>
@@ -234,13 +332,16 @@ export default function CadastrarInstituicao() {
                         rua: '',
                         cep: '',
                         numero: '',
+                        telefone: '',
+                        estado: '',
+                        cidade: '',
                       })}
                       >
                           Cancelar
                       </Button>
                       </Grid>:
                       <Button fullwidth variant="contained" color="primary"
-                      onClick={e=> contextCadastrar.cadastrar(state.nome, state.rua, state.cep, state.numero)}
+                      onClick={e=> contextCadastrar.cadastrar(state.nome, state.rua, state.cep, state.numero, state.telefone, state.cidade, state.estado, state.situacao, state.tipoCliente)}
                       >
                           Cadastrar
                       </Button>

@@ -1,8 +1,7 @@
 import React, { useState, useEffect, forwardRef, useContext  } from 'react';
 import LocalStorageService from '../app/services/localStorage-service';
 import MaterialTable from 'material-table';
-import Axios from 'axios';
-import { makeStyles, TextField, Grid, Button } from '@material-ui/core';
+import { makeStyles, Button } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -18,8 +17,6 @@ import LastPage from '@material-ui/icons/LastPage';
 import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
-import { useHistory } from 'react-router-dom';
-import InstituicaoService from '../app/services/instituicao-service';
 import AulaService from '../app/services/aula-service';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { mensagemSucesso, mensagemErro } from '../components/toastr';
@@ -135,13 +132,11 @@ export default function Aulas(props) {
   const [stateAula, setStateAula] = useState({
     id: '',
     materia: '',
-    aluno: '',
-    instituicao: '',
+    cliente: '',
     professor: '',
-    //refere-se ao tipo de aula
-    aula: '',
     datas: new Date(),
-    hora: new Date(),
+    horaInicial: new Date(),
+    horaFinal: new Date(),
     detalhes: '',
     valor: '',
     delete: false,
@@ -180,18 +175,17 @@ export default function Aulas(props) {
       useEffect(()=>{
         fetchData()
       }, [allAulas])
-      const [aulaService, setService] = useState(new AulaService());
+      const [aulaService] = useState(new AulaService());
       const classes = useStyles();
   
-      const [state, setState] = React.useState({
+      const [state] = React.useState({
         columns: [
           { title: 'Materia', field: 'materia.nome' },
-          { title: 'Professor', field: 'professor.nome' },
-          { title: 'Aluno', field: 'aluno.nome' },
-          { title: 'Instituicao', field: 'instituicao.nome' },
-          { title: 'Tipo de aula', field: 'tipoDeAula' },
+          { title: 'Cliente', field: 'cliente.nome' },
+          { title: 'Tipo de Cliente', field: 'cliente.tipoCliente' },
           { title: 'Data da aula', field: 'data', type: 'date'},
-          { title: 'Hora', field: 'hora'},
+          { title: 'Hora de Inicio', field: 'horaInicial', type: 'date'},
+          { title: 'Hora do término', field: 'horaFim', type: 'date'},
         ],
       });
       return (

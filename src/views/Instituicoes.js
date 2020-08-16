@@ -1,10 +1,7 @@
 import React, { useState, useEffect, forwardRef, useContext  } from 'react';
 import LocalStorageService from '../app/services/localStorage-service';
 import MaterialTable from 'material-table';
-import Axios from 'axios';
-import { makeStyles, TextField, Grid, Button } from '@material-ui/core';
-import Container from '@material-ui/core/Container';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import { makeStyles,  Button } from '@material-ui/core';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import Check from '@material-ui/icons/Check';
@@ -19,8 +16,6 @@ import LastPage from '@material-ui/icons/LastPage';
 import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
-import { useHistory } from 'react-router-dom';
-import MenuHeader from '../components/menu-header/menuHeader'
 import InstituicaoService from '../app/services/instituicao-service';
 import { mensagemSucesso, mensagemErro } from '../components/toastr';
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -143,7 +138,7 @@ export default function Instituicoes(props) {
           open: false,
     })
       const classes = useStyles();
-      const [state, setState] = React.useState({
+      const [state] = React.useState({
         columns: [
           { title: 'Nome', field: 'nome' },
           { title: 'Rua', field: 'rua' },
@@ -159,7 +154,7 @@ export default function Instituicoes(props) {
             })
             instituicaoService.deletar(id).then(
               response=>{
-              mensagemSucesso('Instituição deletada com sucesso')
+              mensagemSucesso('Cliente deletado com sucesso')
             }).catch(e=>{
               mensagemErro(e.response);
             })
@@ -176,6 +171,7 @@ export default function Instituicoes(props) {
           professor: usuarioLogado.id,
         }
         instituicaoService.getInstituicoes(filtro).then(response=>
+         
             setAll({
               instituicao: response.data
             })
@@ -184,7 +180,7 @@ export default function Instituicoes(props) {
       useEffect(()=>{
         fetchData();
       }, [allInsituicoes])
-      const [instituicaoService, setService] = useState(new InstituicaoService());
+      const [instituicaoService] = useState(new InstituicaoService());
     
       return (
         <div className={classes.root}>
@@ -193,7 +189,7 @@ export default function Instituicoes(props) {
           show={stateInstituicao.open}
           showCancel
           confirmBtnText="Sim!"
-          title="Tem certeza que deseja deletar esta instituição?"
+          title="Tem certeza que deseja deletar este cliente?"
           customButtons={
             <React.Fragment>
               <Button style={{margin: 10}} fullwidth variant="contained" color="secondary" onClick={(event) => setStateInstituicao({
@@ -209,7 +205,7 @@ export default function Instituicoes(props) {
         <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <MaterialTable
-         title="Instituições"
+         title="Clientes"
          columns={state.columns}
          data={allInsituicoes.instituicao}       
          options={{

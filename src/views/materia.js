@@ -124,7 +124,7 @@ export default function CadastrarMaterias() {
         }
       })
       const contextCadastrar = useContext(cadastrarMateria);
-      const [materiaService, setService] = useState(new MateriaService());
+      const [materiaService] = useState(new MateriaService());
       return (
         <div className={classes.root}>
           <CssBaseline />

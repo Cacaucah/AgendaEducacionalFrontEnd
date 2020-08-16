@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     let history = useHistory();
     const classes = useStyles();
     const contextEntrar = useContext(entrarAplicacao);
-    const [usuarioService, setService] = useState(new UsuarioService());
+    const [usuarioService] = useState(new UsuarioService());
     const[usuario, setUsuario] = useState({
       email: '', 
       senha: ''

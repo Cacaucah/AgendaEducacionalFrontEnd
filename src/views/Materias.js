@@ -1,9 +1,7 @@
 import React, { useState, useEffect, forwardRef, useContext  } from 'react';
 import LocalStorageService from '../app/services/localStorage-service';
 import MaterialTable from 'material-table';
-import Axios from 'axios';
-import { makeStyles, TextField, Grid, Button } from '@material-ui/core';
-import Container from '@material-ui/core/Container';
+import { makeStyles, Button } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -20,7 +18,6 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import MateriaService from '../app/services/materia-service';
 import { mensagemSucesso, mensagemErro } from '../components/toastr';
 const tableIcons = {
@@ -175,8 +172,8 @@ export default function Materias(props) {
       useEffect(()=>{
         fetchData();
       }, [allMaterias])
-      const [materiaService, setService] = useState(new MateriaService());
-      const [state, setState] = React.useState({
+      const [materiaService] = useState(new MateriaService());
+      const [state] = React.useState({
         columns: [
           { title: 'Materia', field: 'nome' },
           { title: 'Professor', field: 'professor.nome' },

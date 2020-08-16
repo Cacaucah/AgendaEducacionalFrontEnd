@@ -1,0 +1,14 @@
+ 
+/* .nice-dates-day.-disabled {
+    cursor: default;
+    pointer-events: none;
+    background-color: rgb(219, 219, 219);
+    border-radius: 999px;
+    height:176px!important;
+    width: 176px;
+    color: rgb(158, 158, 158);
+} */
+
+.nice-dates-day.thereIsClasses{
+    color: rgb(255, 188, 43);
+}
