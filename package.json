@@ -14,7 +14,7 @@
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.19.2",
     "chart.js": "^2.9.3",
-    "immer": "^6.0.3",
+    "immer": "^8.0.1",
     "material-table": "^1.57.2",
     "material-ui-icons": "^1.0.0-beta.36",
     "moment": "^2.24.0",
